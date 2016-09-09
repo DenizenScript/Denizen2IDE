@@ -1,0 +1,14 @@
+obj/
+debug/
+*.suo
+*.user
+*.exe
+*.pak
+*.str
+x64/
+.vs/
+*.psess
+*.userprefs
+bin/
+*.tmp
+*.mdb
