@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -33,6 +31,12 @@ namespace WinFormsIDETest
 
         private const int WM_SETREDRAW = 0x000B;
 
+        private const int WM_HSCROLL = 0x0114;
+
+        private const int WM_VSCROLL = 0x0115;
+
+        private const int SB_THUMBPOSITION = 4;
+
         public static void Suspend(Control control)
         {
             Message msgSuspendUpdate = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
@@ -46,7 +50,40 @@ namespace WinFormsIDETest
             control.Invalidate();
         }
 
+        // TODO: Linux-y version!
+#if WINDOWS
+        [DllImport( "User32.dll" )]
+        public extern static int GetScrollPos(IntPtr hWnd, int nBar);
+
+        [DllImport("User32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+#endif
+
+        public static Point GetScrollPos(RichTextBox box)
+        {
+#if WINDOWS
+            return new Point(GetScrollPos(box.Handle, 0), GetScrollPos(box.Handle, 1));
+#else
+            return Point.Empty;
+#endif
+        }
+
+        public static void SetScrollPos(RichTextBox box, Point point)
+        {
+#if WINDOWS
+            int x = point.X;
+            int y = point.Y;
+            x <<= 16;
+            uint wParam = (uint)SB_THUMBPOSITION | (uint)x;
+            SendMessage(box.Handle, WM_HSCROLL, new IntPtr(wParam), IntPtr.Zero);
+            y <<= 16;
+            uint wParamY = (uint)SB_THUMBPOSITION | (uint)y;
+            SendMessage(box.Handle, WM_VSCROLL, new IntPtr(wParamY), IntPtr.Zero);
+#endif
+        }
+
         // TODO: Accelerate this method as much as possible using async and whatever else we can do!
+        // Maybe also replace RTFBuilder with lower-level calls somehow.
         private void T_Tick(object sender, EventArgs e)
         {
             if (!textChanged)
@@ -57,6 +94,7 @@ namespace WinFormsIDETest
             Suspend(this);
             int start = richTextBox1.SelectionStart;
             int len = richTextBox1.SelectionLength;
+            Point scroll = GetScrollPos(richTextBox1);
             // Update RTF
             string text = richTextBox1.Text;
             int py = richTextBox1.GetPositionFromCharIndex(0).Y;
@@ -81,6 +119,7 @@ namespace WinFormsIDETest
             // Set back to normal
             Resume(this);
             richTextBox1.Select(start, len);
+            SetScrollPos(richTextBox1, scroll);
             richTextBox1.Invalidate();
             textChanged = false;
         }

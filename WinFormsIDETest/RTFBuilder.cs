@@ -66,9 +66,14 @@ namespace WinFormsIDETest
             return Internal.ToString();
         }
 
+        public string CT()
+        {
+            return "\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green255\\blue0;\\red0\\green0\\blue255;";
+        }
+
         public string FinalOutput()
         {
-            return "{\\rtf1{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green255\\blue0;\\red0\\green0\\blue255;}\\b0\\i0\\cf0" + Internal + "\\par}";
+            return "{\\rtf1{\\colortbl ;" + CT() + "}\\b0\\i0\\cf0" + Internal + "\\par}";
         }
     }
 
