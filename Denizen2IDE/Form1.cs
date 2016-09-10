@@ -16,19 +16,21 @@ namespace Denizen2IDE
         {
             InitializeComponent();
             Timer t = new Timer();
-            t.Interval = 1000;
+            t.Interval = 250;
             t.Tick += T_Tick;
             t.Start();
-            richTextBox1.AcceptsTab = true;
-            richTextBox1.HScroll += RichTextBox1_HScroll;
+            Configure(richTextBox1);
             Rel = this.Size - richTextBox1.Size;
         }
 
-        private void RichTextBox1_HScroll(object sender, EventArgs e)
+        public RichTextBox RTFBox
         {
-            textChanged = true;
+            get
+            {
+                return (RichTextBox)tabControl1.SelectedTab.Controls[0];
+            }
         }
-
+        
         private const int WM_SETREDRAW = 0x000B;
 
         private const int WM_HSCROLL = 0x0114;
@@ -92,15 +94,14 @@ namespace Denizen2IDE
             }
             // Setup
             Suspend(this);
-            int start = richTextBox1.SelectionStart;
-            int len = richTextBox1.SelectionLength;
-            Point scroll = GetScrollPos(richTextBox1);
+            int start = RTFBox.SelectionStart;
+            int len = RTFBox.SelectionLength;
+            Point scroll = GetScrollPos(RTFBox);
             // Update RTF
-            string text = richTextBox1.Text;
-            int py = richTextBox1.GetPositionFromCharIndex(0).Y;
-            int cLoc = 0;// (richTextBox1.GetCharIndexFromPosition(new Point(0, -Math.Max(py - 1, 0))) / 6) * 6;
+            string text = RTFBox.Text;
+            int py = RTFBox.GetPositionFromCharIndex(0).Y;
+            int cLoc = 0;
             RTFBuilder rtf = new RTFBuilder();
-            //rtf.Append(RTFBuilder.For(text.Substring(0, cLoc)));
             int maxlen = (text.Length / 6) * 6;
             for (int i = cLoc; i < maxlen; i += 6)
             {
@@ -115,17 +116,17 @@ namespace Denizen2IDE
             {
                 rtf.Append(RTFBuilder.For(text[i].ToString()));
             }
-            richTextBox1.Rtf = rtf.FinalOutput();
+            RTFBox.Rtf = rtf.FinalOutput();
             // Set back to normal
             Resume(this);
-            richTextBox1.Select(start, len);
-            SetScrollPos(richTextBox1, scroll);
-            richTextBox1.Invalidate();
+            RTFBox.Select(start, len); // TODO: Mess with selecting fresh text a bit less often.
+            SetScrollPos(RTFBox, scroll);
+            RTFBox.Invalidate();
             textChanged = false;
         }
 
         bool textChanged = false;
-
+        
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             textChanged = true;
@@ -133,7 +134,7 @@ namespace Denizen2IDE
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            richTextBox1.Size = this.Size - Rel;
+            RTFBox.Size = this.Size - Rel;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -146,13 +147,48 @@ namespace Denizen2IDE
             Close();
         }
 
+        int i = 2;
+
+        public void NewTab()
+        {
+            TabPage tp = new TabPage("New Script " + i++);
+            tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
+            RichTextBox rtfb = new RichTextBox();
+            rtfb.Location = RTFBox.Location;
+            rtfb.Size = RTFBox.Size;
+            Configure(rtfb);
+            tp.Controls.Add(rtfb);
+            tabControl1.SelectTab(tabControl1.TabCount - 2);
+        }
+
+        public void Configure(RichTextBox rtfb)
+        {
+            rtfb.AcceptsTab = true;
+            rtfb.KeyPress += Rtfb_KeyPress;
+            rtfb.AutoWordSelection = false;
+            rtfb.ShowSelectionMargin = false;
+        }
+
+        private void Rtfb_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '\t')
+            {
+                e.Handled = true;
+                RTFBox.AppendText("    ");
+            }
+        }
+
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
             if (e.TabPage == plusButton)
             {
-                tabControl1.TabPages.Insert(tabControl1.TabCount - 1, new TabPage("New Script"));
-                tabControl1.SelectTab(tabControl1.TabCount - 2);
+                NewTab();
             }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewTab();
         }
     }
 }
