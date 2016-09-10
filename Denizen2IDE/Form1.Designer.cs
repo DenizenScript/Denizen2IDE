@@ -1,4 +1,4 @@
-﻿namespace WinFormsIDETest
+﻿namespace Denizen2IDE
 {
     partial class Form1
     {

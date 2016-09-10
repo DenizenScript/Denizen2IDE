@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 
-namespace WinFormsIDETest
+namespace Denizen2IDE
 {
     public class RTFBuilder
     {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsIDETest", "WinFormsIDETest\WinFormsIDETest.csproj", "{E4C3ADD9-C063-4A42-8528-FEF3B86E11C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Denizen2IDE", "Denizen2IDE\Denizen2IDE.csproj", "{E4C3ADD9-C063-4A42-8528-FEF3B86E11C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

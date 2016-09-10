@@ -7,8 +7,8 @@
     <ProjectGuid>{E4C3ADD9-C063-4A42-8528-FEF3B86E11C9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WinFormsIDETest</RootNamespace>
-    <AssemblyName>WinFormsIDETest</AssemblyName>
+    <RootNamespace>Denizen2IDE</RootNamespace>
+    <AssemblyName>Denizen2IDE</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

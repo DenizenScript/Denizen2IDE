@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace WinFormsIDETest
+namespace Denizen2IDE
 {
     public partial class Form1 : Form
     {
