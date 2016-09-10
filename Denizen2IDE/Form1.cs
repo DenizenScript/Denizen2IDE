@@ -11,6 +11,7 @@ namespace Denizen2IDE
     public partial class Form1 : Form
     {
         Size Rel;
+        Size TabRel;
 
         public Form1()
         {
@@ -21,6 +22,7 @@ namespace Denizen2IDE
             t.Start();
             Configure(richTextBox1);
             Rel = this.Size - richTextBox1.Size;
+            TabRel = this.Size - tabControl1.Size;
         }
 
         public RichTextBox RTFBox
@@ -83,7 +85,7 @@ namespace Denizen2IDE
             SendMessage(box.Handle, WM_VSCROLL, new IntPtr(wParamY), IntPtr.Zero);
 #endif
         }
-
+        
         // TODO: Accelerate this method as much as possible using async and whatever else we can do!
         // Maybe also replace RTFBuilder with lower-level calls somehow.
         private void T_Tick(object sender, EventArgs e)
@@ -98,23 +100,55 @@ namespace Denizen2IDE
             int len = RTFBox.SelectionLength;
             Point scroll = GetScrollPos(RTFBox);
             // Update RTF
-            string text = RTFBox.Text;
-            int py = RTFBox.GetPositionFromCharIndex(0).Y;
-            int cLoc = 0;
+            string[] lines = RTFBox.Text.Replace("\r", "").Split('\n');
             RTFBuilder rtf = new RTFBuilder();
-            int maxlen = (text.Length / 6) * 6;
-            for (int i = cLoc; i < maxlen; i += 6)
+            RTFBox.Rtf = "";
+            for (int i = 0; i < lines.Length; i++)
             {
-                rtf.Append(RTFBuilder.Bold(RTFBuilder.For(text[i].ToString())));
-                rtf.Append(RTFBuilder.Italic(RTFBuilder.For(text[i + 1].ToString())));
-                rtf.Append(RTFBuilder.Colored(RTFBuilder.For(text[i + 2].ToString()), ColorTable.BLUE));
-                rtf.Append(RTFBuilder.Strike(RTFBuilder.For(text[i + 3].ToString())));
-                rtf.Append(RTFBuilder.WavyUnderline(RTFBuilder.For(text[i + 4].ToString())));
-                rtf.Append(RTFBuilder.Underline(RTFBuilder.For(text[i + 5].ToString())));
-            }
-            for (int i = maxlen; i < text.Length; i++)
-            {
-                rtf.Append(RTFBuilder.For(text[i].ToString()));
+                string line = lines[i];
+                string trim = lines[i].Trim();
+                if (trim.Length != 0)
+                {
+                    if (trim.StartsWith("#"))
+                    {
+                        string nospace = trim.Replace(" ", "");
+                        if (nospace.StartsWith("#-") || nospace.StartsWith("#|") || nospace.StartsWith("#+"))
+                        {
+                            rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.RED));
+                        }
+                        else
+                        {
+                            rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.GREEN));
+                        }
+                    }
+                    else if (trim.StartsWith("-"))
+                    {
+                        // TODO: Sub-colors for command lines
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.BLACK));
+                    }
+                    else if (trim.EndsWith(":"))
+                    {
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.BLUE));
+                    }
+                    else if (trim.Contains(": "))
+                    {
+                        int ind = line.IndexOf(": ");
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line.Substring(0, ind + 1)), ColorTable.BLUE));
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.Italic(RTFBuilder.For(line.Substring(ind + 1))), ColorTable.BLACK));
+                    }
+                    else
+                    {
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.WavyUnderline(RTFBuilder.For(line)), ColorTable.PINK));
+                    }
+                }
+                else
+                {
+                    rtf.Append(RTFBuilder.For(line));
+                }
+                if (i < lines.Length - 1)
+                {
+                    rtf.AppendLine();
+                }
             }
             RTFBox.Rtf = rtf.FinalOutput();
             // Set back to normal
@@ -134,6 +168,7 @@ namespace Denizen2IDE
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
+            tabControl1.Size = this.Size - TabRel;
             RTFBox.Size = this.Size - Rel;
         }
 

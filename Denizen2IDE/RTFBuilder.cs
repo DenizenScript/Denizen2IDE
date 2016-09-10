@@ -10,7 +10,7 @@ namespace Denizen2IDE
     {
         public static RTFBuilder For(string text)
         {
-            return new RTFBuilder() { InternalStr = "{" + text.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\t", "\\tab").Replace("\r", "").Replace("\n", "\\par") + "}" };
+            return new RTFBuilder() { InternalStr = "{" + text.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\t", "\\tab").Replace("\r", "").Replace("\n", "\\par").Replace(" ", "\\~") + "}" };
         }
 
         public static RTFBuilder Bold(RTFBuilder text)
@@ -61,6 +61,12 @@ namespace Denizen2IDE
             return this;
         }
 
+        public RTFBuilder AppendLine()
+        {
+            Internal.Append("\\par");
+            return this;
+        }
+
         public override string ToString()
         {
             return Internal.ToString();
@@ -68,7 +74,11 @@ namespace Denizen2IDE
 
         public string CT()
         {
-            return "\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green255\\blue0;\\red0\\green0\\blue255;";
+            return "\\red0\\green0\\blue0;"  // BLACK = 1
+                + "\\red128\\green0\\blue0;" // RED = 2
+                + "\\red0\\green128\\blue0;" // GREEN = 3
+                + "\\red0\\green0\\blue128;" // BLUE = 4
+                + "\\red255\\green0\\blue128;"; // PINK = 5
         }
 
         public string FinalOutput()
@@ -82,6 +92,7 @@ namespace Denizen2IDE
         BLACK = 1,
         RED = 2,
         GREEN = 3,
-        BLUE = 4
+        BLUE = 4,
+        PINK = 5
     }
 }
