@@ -135,5 +135,24 @@ namespace WinFormsIDETest
         {
             richTextBox1.Size = this.Size - Rel;
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Denizen 2 IDE." + Environment.NewLine + Environment.NewLine + "Created by the DenizenScript team, for DenizenScript users.", "Denizen 2 IDE");
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void tabControl1_Selected(object sender, TabControlEventArgs e)
+        {
+            if (e.TabPage == plusButton)
+            {
+                tabControl1.TabPages.Insert(tabControl1.TabCount - 1, new TabPage("New Script"));
+                tabControl1.SelectTab(tabControl1.TabCount - 2);
+            }
+        }
     }
 }
