@@ -23,6 +23,80 @@ namespace Denizen2IDE
             Configure(richTextBox1);
             Rel = this.Size - richTextBox1.Size;
             TabRel = this.Size - tabControl1.Size;
+            Scripts.Add(new LoadedScript() { FilePath = null });
+            Configure(tabPage1, 0);
+            tabControl1.MouseClick += TabControl1_MouseClick;
+            tabControl1.MouseClick += TabControl1_MouseClick2;
+        }
+
+        private void TabControl1_MouseClick2(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+            Point mp = new Point(e.X, e.Y);
+            for (int i = 0; i < tabControl1.TabPages.Count - 1; i++)
+            {
+                if (tabControl1.GetTabRect(i).Contains(mp))
+                {
+                    TabOptions(e.X, e.Y, i);
+                    return;
+                }
+            }
+        }
+
+        public void TabOptions(int x, int y, int tab)
+        {
+            ContextMenu cm = new ContextMenu();
+            cm.MenuItems.Add("Close", (o, e) => CloseTab(tab));
+            cm.MenuItems.Add("Close Others", (o, e) => CloseAllBut(tab));
+            cm.MenuItems.Add("Close All To Left", (o, e) => CloseAllToLeft(tab));
+            cm.MenuItems.Add("Close All To Right", (o, e) => CloseAllToRight(tab));
+            cm.MenuItems.Add("Switch To", (o, e) => tabControl1.SelectTab(tab));
+            cm.MenuItems.Add("Save", (o, e) => MessageBox.Show("TODO"));
+            cm.MenuItems.Add("Save As...", (o, e) => MessageBox.Show("TODO"));
+            cm.Show(tabControl1, new Point(x, y));
+        }
+
+        public void CloseAllToRight(int tab)
+        {
+            for (int i = 0; i < tab; i++)
+            {
+                CloseTab(0);
+            }
+        }
+
+        public void CloseAllToLeft(int tab)
+        {
+            int c = tabControl1.TabPages.Count;
+            for (int i = tab + 2; i < c; i++)
+            {
+                CloseTab(tab + 1);
+            }
+        }
+
+        public void CloseAllBut(int tab)
+        {
+            CloseAllToLeft(tab);
+            CloseAllToRight(tab);
+        }
+
+        private void TabControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Middle)
+            {
+                return;
+            }
+            Point mp = new Point(e.X, e.Y);
+            for (int i = 0; i < tabControl1.TabPages.Count - 1; i++)
+            {
+                if (tabControl1.GetTabRect(i).Contains(mp))
+                {
+                    CloseTab(i);
+                    return;
+                }
+            }
         }
 
         public RichTextBox RTFBox
@@ -198,6 +272,7 @@ namespace Denizen2IDE
         public void NewTab()
         {
             TabPage tp = new TabPage("New Script " + CPage++);
+            Configure(tp, tabControl1.TabCount - 1);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
             RichTextBox rtfb = new RichTextBox();
             rtfb.Location = ReferenceBox.Location;
@@ -205,8 +280,25 @@ namespace Denizen2IDE
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
+            Scripts.Add(new LoadedScript() { FilePath = null });
         }
 
+        public void CloseTab(int index)
+        {
+            if (Scripts.Count == 1)
+            {
+                NewTab();
+            }
+            // TODO: if (unsaved) { Are you sure(); }
+            tabControl1.TabPages.RemoveAt(index);
+            Scripts.RemoveAt(index);
+        }
+
+        public void Configure(TabPage tab, int ind)
+        {
+            // Any Configuration Needed
+        }
+        
         public void Configure(RichTextBox rtfb)
         {
             rtfb.AcceptsTab = true;
@@ -231,6 +323,8 @@ namespace Denizen2IDE
                 NewTab();
             }
         }
+
+        public List<LoadedScript> Scripts = new List<LoadedScript>();
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
