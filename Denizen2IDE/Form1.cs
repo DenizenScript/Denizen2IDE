@@ -172,9 +172,12 @@ namespace Denizen2IDE
             RTFBox.Size = this.Size - Rel;
         }
 
+        AboutBox AB = new AboutBox();
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Denizen 2 IDE." + Environment.NewLine + Environment.NewLine + "Created by the DenizenScript team, for DenizenScript users.", "Denizen 2 IDE");
+            AB.Show();
+            AB.Focus();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -224,6 +227,31 @@ namespace Denizen2IDE
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewTab();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Undo!
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Redo!
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Cut!
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Copy!
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Paste!
         }
     }
 }
