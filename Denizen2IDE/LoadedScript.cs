@@ -7,7 +7,9 @@ namespace Denizen2IDE
 {
     public class LoadedScript
     {
-        public string FilePath;
+        public string FilePath = null;
+
+        public string UnsavedName = null;
 
         public bool Saved = false;
     }

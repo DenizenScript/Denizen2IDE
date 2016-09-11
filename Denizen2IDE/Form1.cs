@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Denizen2IDE
@@ -12,6 +13,8 @@ namespace Denizen2IDE
     {
         Size Rel;
         Size TabRel;
+
+        public static Encoding ENCODING = new UTF8Encoding(false);
 
         public Form1()
         {
@@ -23,7 +26,7 @@ namespace Denizen2IDE
             Configure(richTextBox1);
             Rel = this.Size - richTextBox1.Size;
             TabRel = this.Size - tabControl1.Size;
-            Scripts.Add(new LoadedScript() { FilePath = null });
+            Scripts.Add(new LoadedScript() { FilePath = null, UnsavedName = tabPage1.Text });
             Configure(tabPage1, 0);
             tabControl1.MouseClick += TabControl1_MouseClick;
             tabControl1.MouseClick += TabControl1_MouseClick2;
@@ -54,8 +57,8 @@ namespace Denizen2IDE
             cm.MenuItems.Add("Close All To Left", (o, e) => CloseAllToLeft(tab));
             cm.MenuItems.Add("Close All To Right", (o, e) => CloseAllToRight(tab));
             cm.MenuItems.Add("Switch To", (o, e) => tabControl1.SelectTab(tab));
-            cm.MenuItems.Add("Save", (o, e) => MessageBox.Show("TODO"));
-            cm.MenuItems.Add("Save As...", (o, e) => MessageBox.Show("TODO"));
+            cm.MenuItems.Add("Save", (o, e) => Save(tab));
+            cm.MenuItems.Add("Save As...", (o, e) => SaveAs(tab));
             cm.Show(tabControl1, new Point(x, y));
         }
 
@@ -239,6 +242,8 @@ namespace Denizen2IDE
             SetScrollPos(RTFBox, scroll);
             RTFBox.Invalidate();
             textChanged = false;
+            Scripts[tabControl1.SelectedIndex].Saved = false;
+            FixTabName(tabControl1.SelectedIndex);
         }
 
         bool textChanged = false;
@@ -280,7 +285,7 @@ namespace Denizen2IDE
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
-            Scripts.Add(new LoadedScript() { FilePath = null });
+            Scripts.Add(new LoadedScript() { FilePath = null, UnsavedName = tp.Name });
         }
 
         public void CloseTab(int index)
@@ -363,17 +368,98 @@ namespace Denizen2IDE
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Save!
+            Save(tabControl1.SelectedIndex);
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Save as!
+            SaveAs(tabControl1.SelectedIndex);
         }
 
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Save all!
+        }
+
+        public void FixTabName(int tab)
+        {
+            // TODO: Maybe saved/unsaved images?
+            if (Scripts[tab].FilePath != null)
+            {
+                if (Scripts[tab].Saved)
+                {
+                    tabControl1.TabPages[tab].Text = Path.GetFileName(Scripts[tab].FilePath);
+                }
+                else
+                {
+                    tabControl1.TabPages[tab].Text = Path.GetFileName(Scripts[tab].FilePath) + "*";
+                }
+            }
+            else
+            {
+                if (GetText(tab).Length == 0)
+                {
+                    tabControl1.TabPages[tab].Text = Scripts[tab].UnsavedName;
+                }
+                else
+                {
+                    tabControl1.TabPages[tab].Text = Scripts[tab].UnsavedName + "*";
+                }
+            }
+        }
+
+        public void Save(int tab)
+        {
+            if (Scripts[tab].FilePath != null)
+            {
+                try
+                {
+                    File.WriteAllBytes(Scripts[tab].FilePath, ENCODING.GetBytes(GetText(tab)));
+                    Scripts[tab].Saved = true;
+                    FixTabName(tab);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Internal Exception");
+                }
+            }
+            else
+            {
+                SaveAs(tab);
+            }
+        }
+
+        public string GetText(int tab)
+        {
+            return ((RichTextBox)tabControl1.TabPages[tab].Controls[0]).Text;
+        }
+
+        public void SaveAs(int tab)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.AddExtension = true;
+            sfd.DefaultExt = "yml";
+            if (Scripts[tab].FilePath != null)
+            {
+                sfd.InitialDirectory = Path.GetDirectoryName(Scripts[tab].FilePath);
+            }
+            sfd.Filter = "Script Files (*.yml)|*.yml";
+            DialogResult dr = sfd.ShowDialog(this);
+            if (dr == DialogResult.OK || dr == DialogResult.Yes)
+            {
+                string fn = sfd.FileName;
+                Scripts[tab].FilePath = fn;
+                try
+                {
+                    File.WriteAllBytes(fn, ENCODING.GetBytes(GetText(tab)));
+                    Scripts[tab].Saved = true;
+                    FixTabName(tab);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Internal Exception");
+                }
+            }
         }
     }
 }
