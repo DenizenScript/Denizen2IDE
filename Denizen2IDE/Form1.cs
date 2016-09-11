@@ -32,7 +32,15 @@ namespace Denizen2IDE
                 return (RichTextBox)tabControl1.SelectedTab.Controls[0];
             }
         }
-        
+
+        public RichTextBox ReferenceBox
+        {
+            get
+            {
+                return (RichTextBox)tabControl1.TabPages[0].Controls[0];
+            }
+        }
+
         private const int WM_SETREDRAW = 0x000B;
 
         private const int WM_HSCROLL = 0x0114;
@@ -192,8 +200,8 @@ namespace Denizen2IDE
             TabPage tp = new TabPage("New Script " + i++);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
             RichTextBox rtfb = new RichTextBox();
-            rtfb.Location = RTFBox.Location;
-            rtfb.Size = RTFBox.Size;
+            rtfb.Location = ReferenceBox.Location;
+            rtfb.Size = ReferenceBox.Size;
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
