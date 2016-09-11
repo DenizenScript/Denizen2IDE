@@ -193,11 +193,11 @@ namespace Denizen2IDE
             Close();
         }
 
-        int i = 2;
+        int CPage = 2;
 
         public void NewTab()
         {
-            TabPage tp = new TabPage("New Script " + i++);
+            TabPage tp = new TabPage("New Script " + CPage++);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
             RichTextBox rtfb = new RichTextBox();
             rtfb.Location = ReferenceBox.Location;
@@ -260,6 +260,26 @@ namespace Denizen2IDE
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Paste!
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Open!
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Save!
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Save as!
+        }
+
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO: Save all!
         }
     }
 }
