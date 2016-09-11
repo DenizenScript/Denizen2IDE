@@ -21,5 +21,10 @@ namespace Denizen2IDE
         {
             Process.Start("https://denizenscript.com/");
         }
+
+        private void AboutBox_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
