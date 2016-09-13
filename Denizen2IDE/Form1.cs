@@ -32,6 +32,31 @@ namespace Denizen2IDE
             Configure(tabPage1, 0);
             tabControl1.MouseClick += TabControl1_MouseClick;
             tabControl1.MouseClick += TabControl1_MouseClick2;
+            this.MouseWheel += Form1_MouseWheel;
+        }
+
+        float zoom = 1;
+
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                zoom *= 1.5f * (e.Delta / 120f);
+            }
+            else if (e.Delta < 0)
+            {
+                zoom /= 1.5f * (-e.Delta / 120f);
+            }
+            if (zoom < 1f / 32f)
+            {
+                zoom = 1f / 32f;
+            }
+            else if (zoom > 32f)
+            {
+                zoom = 32f;
+            }
+            textChanged = true;
+            T_Tick(null, null);
         }
 
         private void TabControl1_MouseClick2(object sender, MouseEventArgs e)
@@ -311,17 +336,11 @@ namespace Denizen2IDE
         // Maybe also replace RTFBuilder with lower-level calls somehow.
         private void T_Tick(object sender, EventArgs e)
         {
-            if (z > 0) // TODO: MAKE ZOOMING STAY PROPERLY?!?!
-            {
-                RTFBox.ZoomFactor = z;
-                z = -1;
-            }
             if (!textChanged || NoDup)
             {
                 return;
             }
             NoDup = true;
-            float zoom = RTFBox.ZoomFactor;
             // Setup
             Suspend(this);
             int start = RTFBox.SelectionStart;
@@ -330,9 +349,7 @@ namespace Denizen2IDE
             // Update RTF
             string[] lines = RTFBox.Text.Replace("\r", "").Split('\n');
             RTFBuilder rtf = new RTFBuilder();
-            RTFBox.ZoomFactor = zoom;
             RTFBox.Rtf = "";
-            RTFBox.ZoomFactor = zoom;
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
@@ -414,20 +431,15 @@ namespace Denizen2IDE
                     rtf.AppendLine();
                 }
             }
-            RTFBox.ZoomFactor = zoom;
-            RTFBox.Rtf = rtf.FinalOutput();
+            RTFBox.Rtf = rtf.FinalOutput((int)(zoom * 24));
             // Set back to normal
-            RTFBox.ZoomFactor = zoom;
             Resume(this);
             RTFBox.Select(start, len); // TODO: Mess with selecting fresh text a bit less often.
             SetScrollPos(RTFBox, scroll);
-            RTFBox.ZoomFactor = zoom;
             RTFBox.Invalidate();
-            RTFBox.ZoomFactor = zoom;
             textChanged = false;
             Scripts[tabControl1.SelectedIndex].Saved = false;
             FixTabName(tabControl1.SelectedIndex);
-            RTFBox.ZoomFactor = zoom;
             z = zoom;
             NoDup = false;
         }
@@ -513,6 +525,7 @@ namespace Denizen2IDE
             rtfb.AutoWordSelection = false;
             rtfb.ShowSelectionMargin = false;
             rtfb.TextChanged += richTextBox1_TextChanged;
+            rtfb.MouseWheel += Form1_MouseWheel;
         }
 
         private void Rtfb_KeyPress(object sender, KeyPressEventArgs e)

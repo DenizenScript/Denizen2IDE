@@ -100,9 +100,9 @@ namespace Denizen2IDE
                 ;
         }
 
-        public string FinalOutput()
+        public string FinalOutput(int size)
         {
-            return "{\\rtf1{\\colortbl ;" + CT() + "}\\b0\\i0\\cf0" + Internal + "\\par}";
+            return "{\\rtf1{\\colortbl ;" + CT() + "}\\b0\\i0\\cf0\\fs" + size + Internal.ToString() + "\\par}";
         }
     }
 
