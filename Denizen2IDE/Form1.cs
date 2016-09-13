@@ -364,7 +364,7 @@ namespace Denizen2IDE
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Open!
+            Open();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -380,6 +380,33 @@ namespace Denizen2IDE
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Save all!
+        }
+
+        public void Open()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.AddExtension = true;
+            ofd.DefaultExt = "yml";
+            ofd.Filter = "Script Files (*.yml)|*.yml";
+            DialogResult dr = ofd.ShowDialog(this);
+            if (dr == DialogResult.OK || dr == DialogResult.Yes)
+            {
+                try
+                {
+                    string fn = ofd.FileName;
+                    string data = File.ReadAllText(fn);
+                    NewTab();
+                    int tab = Scripts.Count - 1;
+                    Scripts[tab].Saved = true;
+                    Scripts[tab].FilePath = fn;
+                    SetText(tab, data);
+                    FixTabName(tab);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Internal Exception");
+                }
+            }
         }
 
         public void FixTabName(int tab)
@@ -433,6 +460,11 @@ namespace Denizen2IDE
         public string GetText(int tab)
         {
             return ((RichTextBox)tabControl1.TabPages[tab].Controls[0]).Text;
+        }
+
+        public void SetText(int tab, string txt)
+        {
+            ((RichTextBox)tabControl1.TabPages[tab].Controls[0]).Text = txt;
         }
 
         public void SaveAs(int tab)
