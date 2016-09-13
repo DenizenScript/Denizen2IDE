@@ -208,7 +208,6 @@ namespace Denizen2IDE
                     }
                     else if (trim.StartsWith("-"))
                     {
-                        // TODO: Sub-colors for command lines
                         rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.BLACK));
                     }
                     else if (trim.EndsWith(":"))
@@ -290,11 +289,21 @@ namespace Denizen2IDE
 
         public void CloseTab(int index)
         {
+            if ((!Scripts[index].Saved && Scripts[index].FilePath != null)
+                || Scripts[index].FilePath == null && GetText(index).Length > 0)
+            {
+                DialogResult res = MessageBox.Show("Script " + Scripts[index].FilePath + " is not saved!"
+                    + Environment.NewLine + "Are you sure you want to close it?",
+                    "Are You Sure", MessageBoxButtons.YesNoCancel);
+                if (res != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
             if (Scripts.Count == 1)
             {
                 NewTab();
             }
-            // TODO: if (unsaved) { Are you sure(); }
             tabControl1.TabPages.RemoveAt(index);
             Scripts.RemoveAt(index);
         }
