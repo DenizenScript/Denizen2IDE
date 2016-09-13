@@ -208,7 +208,38 @@ namespace Denizen2IDE
                     }
                     else if (trim.StartsWith("-"))
                     {
-                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.BLACK));
+                        int dash = line.IndexOf('-');
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line.Substring(0, dash + 1)), ColorTable.BLACK));
+                        string fullcmd = line.Substring(dash + 1);
+                        if (fullcmd.Length <= 1)
+                        {
+                            rtf.Append(RTFBuilder.Colored(RTFBuilder.For(fullcmd), ColorTable.BLACK));
+                        }
+                        else
+                        {
+                            if (fullcmd[0] != ' ')
+                            {
+                                rtf.Append(RTFBuilder.Colored(RTFBuilder.WavyUnderline(RTFBuilder.For(fullcmd)), ColorTable.PINK));
+                            }
+                            else
+                            {
+                                rtf.Append(RTFBuilder.For(" "));
+                                string basecmd = fullcmd.Substring(1);
+                                if (basecmd.Length > 0)
+                                {
+                                    int space = basecmd.IndexOf(' ');
+                                    if (space == -1)
+                                    {
+                                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd), ColorTable.PURPLE));
+                                    }
+                                    else
+                                    {
+                                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd.Substring(0, space)), ColorTable.PURPLE));
+                                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd.Substring(space)), ColorTable.BLACK));
+                                    }
+                                }
+                            }
+                        }
                     }
                     else if (trim.EndsWith(":"))
                     {

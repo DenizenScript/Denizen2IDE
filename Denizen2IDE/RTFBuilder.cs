@@ -84,7 +84,9 @@ namespace Denizen2IDE
                 + "\\red0\\green128\\blue0;" // GREEN = 3
                 + "\\red0\\green0\\blue128;" // BLUE = 4
                 + "\\red255\\green0\\blue128;" // PINK = 5
-                + "\\red128\\green128\\blue128;"; // GRAY = 6
+                + "\\red128\\green128\\blue128;" // GRAY = 6
+                + "\\red128\\green0\\blue255;" // PURPLE = 7
+                ;
         }
 
         public string FinalOutput()
@@ -100,6 +102,7 @@ namespace Denizen2IDE
         GREEN = 3,
         BLUE = 4,
         PINK = 5,
-        GRAY = 6
+        GRAY = 6,
+        PURPLE = 7
     }
 }
