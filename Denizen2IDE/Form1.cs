@@ -285,7 +285,7 @@ namespace Denizen2IDE
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
-            Scripts.Add(new LoadedScript() { FilePath = null, UnsavedName = tp.Name });
+            Scripts.Add(new LoadedScript() { FilePath = null, UnsavedName = tp.Text });
         }
 
         public void CloseTab(int index)
@@ -310,6 +310,7 @@ namespace Denizen2IDE
             rtfb.KeyPress += Rtfb_KeyPress;
             rtfb.AutoWordSelection = false;
             rtfb.ShowSelectionMargin = false;
+            rtfb.TextChanged += richTextBox1_TextChanged;
         }
 
         private void Rtfb_KeyPress(object sender, KeyPressEventArgs e)
