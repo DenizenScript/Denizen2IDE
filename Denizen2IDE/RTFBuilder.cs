@@ -43,6 +43,14 @@ namespace Denizen2IDE
             return new RTFBuilder() { InternalStr = "{\\cf" + ((int)color).ToString() + " " + text.ToString() + "\\cf0}" };
         }
 
+        public static RTFBuilder BackColored(RTFBuilder text, ColorTable color)
+        {
+            return new RTFBuilder() { InternalStr = "{\\chcbpat" + ((int)color).ToString()
+                + "\\cb" + ((int)color).ToString()
+                + "\\highlight" + ((int)color).ToString()
+                + " " + text.ToString() + "\\chcbpat0\\cb0\\hightlight0}" };
+        }
+
         public RTFBuilder Replace(string text, RTFBuilder res)
         {
             return new RTFBuilder() { Internal = new StringBuilder(Internal.ToString().Replace(text, res.ToString())) };
@@ -88,6 +96,7 @@ namespace Denizen2IDE
                 + "\\red128\\green0\\blue255;" // PURPLE = 7
                 + "\\red64\\green64\\blue64;" // DARK_GRAY = 8
                 + "\\red0\\green128\\blue128;" // DARK_CYAN = 9
+                + "\\red200\\green200\\blue200;" // LIGHT_GRAY = 10
                 ;
         }
 
@@ -107,6 +116,7 @@ namespace Denizen2IDE
         GRAY = 6,
         PURPLE = 7,
         DARK_GRAY = 8,
-        DARK_CYAN = 9
+        DARK_CYAN = 9,
+        LIGHT_GRAY = 10
     }
 }

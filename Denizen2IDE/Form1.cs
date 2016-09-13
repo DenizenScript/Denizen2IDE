@@ -204,12 +204,12 @@ namespace Denizen2IDE
                     deep--;
                     if (deep == 0)
                     {
-                        built.Append(RTFBuilder.Colored(RTFBuilder.For("<"), ColorTable.DARK_GRAY));
+                        built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(RTFBuilder.For("<"), ColorTable.DARK_GRAY), ColorTable.LIGHT_GRAY));
                         if (sb.Length > 1)
                         {
-                            built.Append(ColorInsideTag(sb.ToString().Substring(1, sb.Length - 1)));
+                            built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(ColorInsideTag(sb.ToString().Substring(1, sb.Length - 1)), ColorTable.DARK_GRAY), ColorTable.LIGHT_GRAY));
                         }
-                        built.Append(RTFBuilder.Colored(RTFBuilder.For(">"), ColorTable.DARK_GRAY));
+                        built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(RTFBuilder.For(">"), ColorTable.DARK_GRAY), ColorTable.LIGHT_GRAY));
                         sb.Clear();
                         continue;
                     }
@@ -220,9 +220,41 @@ namespace Denizen2IDE
             return built;
         }
 
-        public RTFBuilder ColorInsideTag(string tag)
+        public RTFBuilder ColorInsideTag(string arg)
         {
-            return RTFBuilder.Colored(RTFBuilder.For(tag), ColorTable.GREEN); // TODO: Placeholder!
+            RTFBuilder built = new RTFBuilder();
+            StringBuilder sb = new StringBuilder();
+            int deep = 0;
+            for (int i = 0; i < arg.Length; i++)
+            {
+                if (arg[i] == '[')
+                {
+                    if (deep == 0)
+                    {
+                        built.Append(RTFBuilder.For(sb.ToString()));
+                        sb.Clear();
+                    }
+                    deep++;
+                }
+                else if (deep > 0 && arg[i] == ']')
+                {
+                    deep--;
+                    if (deep == 0)
+                    {
+                        built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(RTFBuilder.For("["), ColorTable.LIGHT_GRAY), ColorTable.DARK_GRAY));
+                        if (sb.Length > 1)
+                        {
+                            built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(ColorArg(sb.ToString().Substring(1, sb.Length - 1)), ColorTable.LIGHT_GRAY), ColorTable.DARK_GRAY));
+                        }
+                        built.Append(RTFBuilder.BackColored(RTFBuilder.Colored(RTFBuilder.For("]"), ColorTable.LIGHT_GRAY), ColorTable.DARK_GRAY));
+                        sb.Clear();
+                        continue;
+                    }
+                }
+                sb.Append(arg[i]);
+            }
+            built.Append(RTFBuilder.For(sb.ToString()));
+            return built;
         }
 
         public List<string> CleverSplit(string input)
