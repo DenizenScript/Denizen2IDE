@@ -170,7 +170,7 @@ namespace Denizen2IDE
             SendMessage(box.Handle, WM_VSCROLL, new IntPtr(wParamY), IntPtr.Zero);
 #endif
         }
-
+        
         public RTFBuilder ColorArg(string arg)
         {
             if (arg.StartsWith("\"") || arg.StartsWith("\'"))
@@ -185,7 +185,44 @@ namespace Denizen2IDE
                 res.Append(RTFBuilder.Colored(RTFBuilder.For(arg[0].ToString()), ColorTable.DARK_CYAN));
                 return res;
             }
-            return RTFBuilder.For(arg);
+            RTFBuilder built = new RTFBuilder();
+            StringBuilder sb = new StringBuilder();
+            int deep = 0;
+            for (int i = 0; i < arg.Length; i++)
+            {
+                if (arg[i] == '<')
+                {
+                    if (deep == 0)
+                    {
+                        built.Append(RTFBuilder.For(sb.ToString()));
+                        sb.Clear();
+                    }
+                    deep++;
+                }
+                else if (deep > 0 && arg[i] == '>')
+                {
+                    deep--;
+                    if (deep == 0)
+                    {
+                        built.Append(RTFBuilder.Colored(RTFBuilder.For("<"), ColorTable.DARK_GRAY));
+                        if (sb.Length > 1)
+                        {
+                            built.Append(ColorInsideTag(sb.ToString().Substring(1, sb.Length - 1)));
+                        }
+                        built.Append(RTFBuilder.Colored(RTFBuilder.For(">"), ColorTable.DARK_GRAY));
+                        sb.Clear();
+                        continue;
+                    }
+                }
+                sb.Append(arg[i]);
+            }
+            built.Append(RTFBuilder.For(sb.ToString()));
+            return built;
+        }
+
+        public RTFBuilder ColorInsideTag(string tag)
+        {
+            return RTFBuilder.Colored(RTFBuilder.For(tag), ColorTable.GREEN); // TODO: Placeholder!
         }
 
         public List<string> CleverSplit(string input)
@@ -299,7 +336,7 @@ namespace Denizen2IDE
                                     {
                                         rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd.Substring(0, space)), ColorTable.PURPLE));
                                         rtf.Append(RTFBuilder.For(" "));
-                                        rtf.Append(ColorArgs(basecmd.Substring(space + 1)));
+                                        rtf.Append(RTFBuilder.Colored(ColorArgs(basecmd.Substring(space + 1)), ColorTable.BLACK));
                                     }
                                 }
                             }
