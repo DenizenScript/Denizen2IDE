@@ -11,6 +11,8 @@ namespace Denizen2IDE
 {
     public partial class Form1 : Form
     {
+        // TODO: Dragging files onto the form
+
         Size Rel;
         Size TabRel;
 
@@ -302,15 +304,24 @@ namespace Denizen2IDE
             }
             return res;
         }
+
+        bool NoDup = false;
         
         // TODO: Accelerate this method as much as possible using async and whatever else we can do!
         // Maybe also replace RTFBuilder with lower-level calls somehow.
         private void T_Tick(object sender, EventArgs e)
         {
-            if (!textChanged)
+            if (z > 0) // TODO: MAKE ZOOMING STAY PROPERLY?!?!
+            {
+                RTFBox.ZoomFactor = z;
+                z = -1;
+            }
+            if (!textChanged || NoDup)
             {
                 return;
             }
+            NoDup = true;
+            float zoom = RTFBox.ZoomFactor;
             // Setup
             Suspend(this);
             int start = RTFBox.SelectionStart;
@@ -319,7 +330,9 @@ namespace Denizen2IDE
             // Update RTF
             string[] lines = RTFBox.Text.Replace("\r", "").Split('\n');
             RTFBuilder rtf = new RTFBuilder();
+            RTFBox.ZoomFactor = zoom;
             RTFBox.Rtf = "";
+            RTFBox.ZoomFactor = zoom;
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
@@ -401,22 +414,34 @@ namespace Denizen2IDE
                     rtf.AppendLine();
                 }
             }
+            RTFBox.ZoomFactor = zoom;
             RTFBox.Rtf = rtf.FinalOutput();
             // Set back to normal
+            RTFBox.ZoomFactor = zoom;
             Resume(this);
             RTFBox.Select(start, len); // TODO: Mess with selecting fresh text a bit less often.
             SetScrollPos(RTFBox, scroll);
+            RTFBox.ZoomFactor = zoom;
             RTFBox.Invalidate();
+            RTFBox.ZoomFactor = zoom;
             textChanged = false;
             Scripts[tabControl1.SelectedIndex].Saved = false;
             FixTabName(tabControl1.SelectedIndex);
+            RTFBox.ZoomFactor = zoom;
+            z = zoom;
+            NoDup = false;
         }
+
+        float z = -1;
 
         bool textChanged = false;
         
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            textChanged = true;
+            if (!NoDup)
+            {
+                textChanged = true;
+            }
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -448,6 +473,7 @@ namespace Denizen2IDE
             RichTextBox rtfb = new RichTextBox();
             rtfb.Location = ReferenceBox.Location;
             rtfb.Size = ReferenceBox.Size;
+            rtfb.Font = ReferenceBox.Font;
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
