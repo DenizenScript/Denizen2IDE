@@ -212,12 +212,15 @@ namespace Denizen2IDE
                     }
                     else if (trim.EndsWith(":"))
                     {
-                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line), ColorTable.BLUE));
+                        RTFBuilder coloredcolon = RTFBuilder.Colored(RTFBuilder.For(":"), ColorTable.GRAY);
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line).Replace(":", coloredcolon), ColorTable.BLUE));
                     }
                     else if (trim.Contains(": "))
                     {
                         int ind = line.IndexOf(": ");
-                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line.Substring(0, ind + 1)), ColorTable.BLUE));
+                        RTFBuilder coloredcolon = RTFBuilder.Colored(RTFBuilder.For(":"), ColorTable.GRAY);
+                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(line.Substring(0, ind)).Replace(":", coloredcolon), ColorTable.BLUE));
+                        rtf.Append(coloredcolon);
                         rtf.Append(RTFBuilder.Colored(RTFBuilder.Italic(RTFBuilder.For(line.Substring(ind + 1))), ColorTable.BLACK));
                     }
                     else

@@ -43,6 +43,11 @@ namespace Denizen2IDE
             return new RTFBuilder() { InternalStr = "{\\cf" + ((int)color).ToString() + " " + text.ToString() + "\\cf0}" };
         }
 
+        public RTFBuilder Replace(string text, RTFBuilder res)
+        {
+            return new RTFBuilder() { Internal = new StringBuilder(Internal.ToString().Replace(text, res.ToString())) };
+        }
+
         public StringBuilder Internal = new StringBuilder();
 
         string InternalStr
@@ -78,7 +83,8 @@ namespace Denizen2IDE
                 + "\\red128\\green0\\blue0;" // RED = 2
                 + "\\red0\\green128\\blue0;" // GREEN = 3
                 + "\\red0\\green0\\blue128;" // BLUE = 4
-                + "\\red255\\green0\\blue128;"; // PINK = 5
+                + "\\red255\\green0\\blue128;" // PINK = 5
+                + "\\red128\\green128\\blue128;"; // GRAY = 6
         }
 
         public string FinalOutput()
@@ -93,6 +99,7 @@ namespace Denizen2IDE
         RED = 2,
         GREEN = 3,
         BLUE = 4,
-        PINK = 5
+        PINK = 5,
+        GRAY = 6
     }
 }
