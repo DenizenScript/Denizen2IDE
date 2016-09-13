@@ -170,6 +170,69 @@ namespace Denizen2IDE
             SendMessage(box.Handle, WM_VSCROLL, new IntPtr(wParamY), IntPtr.Zero);
 #endif
         }
+
+        public RTFBuilder ColorArg(string arg)
+        {
+            if (arg.StartsWith("\"") || arg.StartsWith("\'"))
+            {
+                if (arg.Length == 1 || !arg.EndsWith(arg[0].ToString()))
+                {
+                    return RTFBuilder.Colored(RTFBuilder.WavyUnderline(RTFBuilder.For(arg)), ColorTable.PINK);
+                }
+                RTFBuilder res = new RTFBuilder();
+                res.Append(RTFBuilder.Colored(RTFBuilder.For(arg[0].ToString()), ColorTable.DARK_CYAN));
+                res.Append(RTFBuilder.Colored(ColorArg(arg.Substring(1, arg.Length - 2)), ColorTable.DARK_CYAN));
+                res.Append(RTFBuilder.Colored(RTFBuilder.For(arg[0].ToString()), ColorTable.DARK_CYAN));
+                return res;
+            }
+            return RTFBuilder.For(arg);
+        }
+
+        public List<string> CleverSplit(string input)
+        {
+            List<string> res = new List<string>();
+            StringBuilder built = new StringBuilder();
+            char quoted = '\0';
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] == '\0')
+                {
+                    continue;
+                }
+                if (quoted == '\0' && input[i] == ' ')
+                {
+                    res.Add(built.ToString());
+                    built.Clear();
+                    continue;
+                }
+                else if (quoted == '\0' && (input[i] == '\"' || input[i] == '\''))
+                {
+                    quoted = input[i];
+                }
+                else if (quoted == input[i] && i + 1 < input.Length && input[i + 1] == ' ')
+                {
+                    quoted = '\0';
+                }
+                built.Append(input[i]);
+            }
+            res.Add(built.ToString());
+            return res;
+        }
+
+        public RTFBuilder ColorArgs(string args)
+        {
+            RTFBuilder res = new RTFBuilder();
+            List<string> dat = CleverSplit(args);
+            for (int i = 0; i < dat.Count; i++)
+            {
+                res.Append(ColorArg(dat[i]));
+                if (i + 1 < dat.Count)
+                {
+                    res.Append(RTFBuilder.For(" "));
+                }
+            }
+            return res;
+        }
         
         // TODO: Accelerate this method as much as possible using async and whatever else we can do!
         // Maybe also replace RTFBuilder with lower-level calls somehow.
@@ -235,7 +298,8 @@ namespace Denizen2IDE
                                     else
                                     {
                                         rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd.Substring(0, space)), ColorTable.PURPLE));
-                                        rtf.Append(RTFBuilder.Colored(RTFBuilder.For(basecmd.Substring(space)), ColorTable.BLACK));
+                                        rtf.Append(RTFBuilder.For(" "));
+                                        rtf.Append(ColorArgs(basecmd.Substring(space + 1)));
                                     }
                                 }
                             }

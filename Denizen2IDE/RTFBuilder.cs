@@ -86,6 +86,8 @@ namespace Denizen2IDE
                 + "\\red255\\green0\\blue128;" // PINK = 5
                 + "\\red128\\green128\\blue128;" // GRAY = 6
                 + "\\red128\\green0\\blue255;" // PURPLE = 7
+                + "\\red64\\green64\\blue64;" // DARK_GRAY = 8
+                + "\\red0\\green128\\blue128;" // DARK_CYAN = 9
                 ;
         }
 
@@ -103,6 +105,8 @@ namespace Denizen2IDE
         BLUE = 4,
         PINK = 5,
         GRAY = 6,
-        PURPLE = 7
+        PURPLE = 7,
+        DARK_GRAY = 8,
+        DARK_CYAN = 9
     }
 }
