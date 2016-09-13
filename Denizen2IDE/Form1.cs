@@ -47,13 +47,13 @@ namespace Denizen2IDE
             {
                 zoom /= 1.5f * (-e.Delta / 120f);
             }
-            if (zoom < 1f / 32f)
+            if (zoom < 1f / 10f)
             {
-                zoom = 1f / 32f;
+                zoom = 1f / 10f;
             }
-            else if (zoom > 32f)
+            else if (zoom > 10f)
             {
-                zoom = 32f;
+                zoom = 10f;
             }
             textChanged = true;
             T_Tick(null, null);
@@ -708,6 +708,22 @@ namespace Denizen2IDE
                     MessageBox.Show(ex.ToString(), "Internal Exception");
                 }
             }
+        }
+
+        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
+        }
+
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+        }
+
+        private void resetZoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            zoom = 1f;
+            Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
         }
     }
 }
