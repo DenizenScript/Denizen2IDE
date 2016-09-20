@@ -466,6 +466,11 @@ namespace Denizen2IDE
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (AB == null || AB.IsDisposed)
+            {
+                AB = new AboutBox();
+                AB.FormClosing += (one, two) => { AB = null; };
+            }
             AB.Show();
             AB.Focus();
         }

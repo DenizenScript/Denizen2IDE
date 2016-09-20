@@ -7,6 +7,8 @@ namespace Denizen2IDE
 {
     static class Program
     {
+        public static string VERSION = "0.0.5";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

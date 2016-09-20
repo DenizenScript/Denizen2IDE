@@ -15,6 +15,7 @@ namespace Denizen2IDE
         public AboutBox()
         {
             InitializeComponent();
+            versionLabel.Text = "Version: " + Program.VERSION;
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
