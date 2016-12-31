@@ -531,6 +531,38 @@ namespace Denizen2IDE
             rtfb.ShowSelectionMargin = false;
             rtfb.TextChanged += richTextBox1_TextChanged;
             rtfb.MouseWheel += Form1_MouseWheel;
+            rtfb.KeyDown += Rtfb_KeyDown;
+        }
+
+        private void Rtfb_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Shift && e.KeyData == Keys.Enter)
+            {
+                e.Handled = true;
+                int s = RTFBox.SelectionStart;
+                int spaces = 0;
+                string t = RTFBox.Text;
+                for (int i = s - 1; i >= 0; i--)
+                {
+                    if (t[i] == '\n')
+                    {
+                        for (int x = i + 1; x < s; x++)
+                        {
+                            if (t[x] == ' ')
+                            {
+                                spaces++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                RTFBox.Text = RTFBox.Text.Substring(0, s) + Environment.NewLine + new string(' ', spaces) + RTFBox.Text.Substring(s + RTFBox.SelectionLength);
+                RTFBox.Select(s + Environment.NewLine.Length + spaces, 0);
+            }
         }
 
         private void Rtfb_KeyPress(object sender, KeyPressEventArgs e)
@@ -538,7 +570,9 @@ namespace Denizen2IDE
             if (e.KeyChar == '\t')
             {
                 e.Handled = true;
-                RTFBox.AppendText("    ");
+                int s = RTFBox.SelectionStart;
+                RTFBox.Text = RTFBox.Text.Substring(0, s) + "    " + RTFBox.Text.Substring(s + RTFBox.SelectionLength);
+                RTFBox.Select(s + 4, 0);
             }
         }
 
