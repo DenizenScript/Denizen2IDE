@@ -12,5 +12,7 @@ namespace Denizen2IDE
         public string UnsavedName = null;
 
         public bool Saved = false;
+
+        public bool IgnoreOneSaveNotif = false;
     }
 }

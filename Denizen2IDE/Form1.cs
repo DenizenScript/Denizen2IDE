@@ -438,7 +438,8 @@ namespace Denizen2IDE
             SetScrollPos(RTFBox, scroll);
             RTFBox.Invalidate();
             textChanged = false;
-            Scripts[tabControl1.SelectedIndex].Saved = false;
+            Scripts[tabControl1.SelectedIndex].Saved = Scripts[tabControl1.SelectedIndex].IgnoreOneSaveNotif;
+            Scripts[tabControl1.SelectedIndex].IgnoreOneSaveNotif = false;
             FixTabName(tabControl1.SelectedIndex);
             z = zoom;
             NoDup = false;
@@ -651,9 +652,10 @@ namespace Denizen2IDE
                     string data = File.ReadAllText(fn);
                     NewTab();
                     int tab = Scripts.Count - 1;
-                    Scripts[tab].Saved = true;
                     Scripts[tab].FilePath = fn;
                     SetText(tab, data);
+                    Scripts[tab].Saved = true;
+                    Scripts[tab].IgnoreOneSaveNotif = true;
                     FixTabName(tab);
                 }
                 catch (Exception ex)
