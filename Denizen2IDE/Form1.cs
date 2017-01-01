@@ -33,6 +33,26 @@ namespace Denizen2IDE
             tabControl1.MouseClick += TabControl1_MouseClick;
             tabControl1.MouseClick += TabControl1_MouseClick2;
             this.MouseWheel += Form1_MouseWheel;
+            this.FormClosing += Form1_FormClosing;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            for (int i = 0; i < Scripts.Count; i++)
+            {
+                if ((!Scripts[i].Saved && Scripts[i].FilePath != null)
+                    || Scripts[i].FilePath == null && GetText(i).Length > 0)
+                {
+                    DialogResult res = MessageBox.Show("One or more scripts are not saved!"
+                        + Environment.NewLine + "Are you sure you want to close them?",
+                        "Are You Sure", MessageBoxButtons.YesNoCancel);
+                    if (res != DialogResult.Yes)
+                    {
+                        e.Cancel = true;
+                    }
+                    return;
+                }
+            }
         }
 
         float zoom = 1;
