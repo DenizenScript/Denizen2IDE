@@ -59,6 +59,10 @@ namespace Denizen2IDE
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (!ModifierKeys.HasFlag(Keys.Control))
+            {
+                return;
+            }
             if (e.Delta > 0)
             {
                 zoom *= 1.5f * (e.Delta / 120f);
