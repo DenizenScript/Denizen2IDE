@@ -226,14 +226,19 @@ namespace Denizen2IDE
         {
             if (arg.StartsWith("\"") || arg.StartsWith("\'"))
             {
-                if (arg.Length == 1 || !arg.EndsWith(arg[0].ToString()))
+                bool colon = arg.EndsWith(arg[0].ToString() + ":");
+                if (arg.Length == 1 || (!arg.EndsWith(arg[0].ToString()) && !colon))
                 {
                     return RTFBuilder.Colored(RTFBuilder.WavyUnderline(RTFBuilder.For(arg)), ColorTable.PINK);
                 }
                 RTFBuilder res = new RTFBuilder();
                 res.Append(RTFBuilder.Colored(RTFBuilder.For(arg[0].ToString()), ColorTable.DARK_CYAN));
-                res.Append(RTFBuilder.Colored(ColorArg(arg.Substring(1, arg.Length - 2)), ColorTable.DARK_CYAN));
+                res.Append(RTFBuilder.Colored(ColorArg(arg.Substring(1, arg.Length - (colon ? 3 : 2))), ColorTable.DARK_CYAN));
                 res.Append(RTFBuilder.Colored(RTFBuilder.For(arg[0].ToString()), ColorTable.DARK_CYAN));
+                if (colon)
+                {
+                    res.Append(RTFBuilder.For(":"));
+                }
                 return res;
             }
             RTFBuilder built = new RTFBuilder();
