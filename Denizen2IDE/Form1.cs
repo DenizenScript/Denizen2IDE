@@ -586,7 +586,7 @@ namespace Denizen2IDE
                     }
                 }
                 RTFBox.Text = RTFBox.Text.Substring(0, s) + Environment.NewLine + new string(' ', spaces) + RTFBox.Text.Substring(s + RTFBox.SelectionLength);
-                RTFBox.Select(s + Environment.NewLine.Length + spaces, 0);
+                RTFBox.Select(s + Environment.NewLine.Length + spaces - 1, 0);
             }
         }
 
