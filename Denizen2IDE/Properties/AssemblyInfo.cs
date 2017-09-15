@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WinFormsIDETest")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Denizen2IDE")]
+[assembly: AssemblyDescription("A tool for Denizen2 users.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WinFormsIDETest")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyProduct("Denizen2IDE")]
+[assembly: AssemblyCopyright("Copyright © DenizenScript 2016-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

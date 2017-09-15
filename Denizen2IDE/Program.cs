@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Globalization;
 
 namespace Denizen2IDE
 {
@@ -18,6 +19,9 @@ namespace Denizen2IDE
         [STAThread]
         static void Main()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
