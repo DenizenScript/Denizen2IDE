@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Denizen2IDE
 {
     static class Program
     {
-        public static string VERSION = "0.0.6";
+        public static string VERSION = Assembly.GetCallingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// The main entry point for the application.
