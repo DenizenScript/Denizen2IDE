@@ -21,8 +21,10 @@ namespace Denizen2IDE
         public Form1()
         {
             InitializeComponent();
-            Timer t = new Timer();
-            t.Interval = 250;
+            Timer t = new Timer()
+            {
+                Interval = 250
+            };
             t.Tick += T_Tick;
             t.Start();
             Configure(richTextBox1);
@@ -115,18 +117,18 @@ namespace Denizen2IDE
 
         public void CloseAllToRight(int tab)
         {
-            for (int i = 0; i < tab; i++)
+            int c = tabControl1.TabPages.Count;
+            for (int i = tab + 2; i < c; i++)
             {
-                CloseTab(0);
+                CloseTab(tab + 1);
             }
         }
 
         public void CloseAllToLeft(int tab)
         {
-            int c = tabControl1.TabPages.Count;
-            for (int i = tab + 2; i < c; i++)
+            for (int i = 0; i < tab; i++)
             {
-                CloseTab(tab + 1);
+                CloseTab(0);
             }
         }
 
@@ -190,7 +192,7 @@ namespace Denizen2IDE
             control.Invalidate();
         }
 
-        // TODO: Linux-y version!
+        // TODO: Linux-y version of this WINDOWS locked code!
 #if WINDOWS
         [DllImport( "User32.dll" )]
         public extern static int GetScrollPos(IntPtr hWnd, int nBar);
@@ -478,7 +480,7 @@ namespace Denizen2IDE
 
         bool textChanged = false;
         
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void RichTextBox1_TextChanged(object sender, EventArgs e)
         {
             if (!NoDup)
             {
@@ -489,12 +491,12 @@ namespace Denizen2IDE
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             tabControl1.Size = this.Size - TabRel;
-            RTFBox.Size = this.Size - Rel;
+            //RTFBox.Size = this.Size - Rel;
         }
 
         AboutBox AB = new AboutBox();
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (AB == null || AB.IsDisposed)
             {
@@ -505,7 +507,7 @@ namespace Denizen2IDE
             AB.Focus();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -517,10 +519,12 @@ namespace Denizen2IDE
             TabPage tp = new TabPage("New Script " + CPage++);
             Configure(tp, tabControl1.TabCount - 1);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
-            RichTextBox rtfb = new RichTextBox();
-            rtfb.Location = ReferenceBox.Location;
-            rtfb.Size = ReferenceBox.Size;
-            rtfb.Font = ReferenceBox.Font;
+            RichTextBox rtfb = new RichTextBox()
+            {
+                Location = ReferenceBox.Location,
+                Size = ReferenceBox.Size,
+                Font = ReferenceBox.Font
+            };
             Configure(rtfb);
             tp.Controls.Add(rtfb);
             tabControl1.SelectTab(tabControl1.TabCount - 2);
@@ -559,9 +563,10 @@ namespace Denizen2IDE
             rtfb.KeyPress += Rtfb_KeyPress;
             rtfb.AutoWordSelection = false;
             rtfb.ShowSelectionMargin = false;
-            rtfb.TextChanged += richTextBox1_TextChanged;
+            rtfb.TextChanged += RichTextBox1_TextChanged;
             rtfb.MouseWheel += Form1_MouseWheel;
             rtfb.KeyDown += Rtfb_KeyDown;
+            rtfb.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
         }
 
         private void Rtfb_KeyDown(object sender, KeyEventArgs e)
@@ -607,86 +612,95 @@ namespace Denizen2IDE
             }
         }
 
-        private void tabControl1_Selected(object sender, TabControlEventArgs e)
+        private void TabControl1_Selected(object sender, TabControlEventArgs e)
         {
             if (e.TabPage == plusButton)
             {
                 NewTab();
             }
+            textChanged = true;
         }
 
         public List<LoadedScript> Scripts = new List<LoadedScript>();
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewTab();
         }
 
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Undo!
         }
 
-        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Redo!
         }
 
-        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Cut!
         }
 
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Copy!
         }
 
-        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO: Paste!
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Open();
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Save(tabControl1.SelectedIndex);
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveAs(tabControl1.SelectedIndex);
         }
 
-        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Save all!
+            for (int i = 0; i < Scripts.Count; i++)
+            {
+                Save(i);
+            }
         }
 
         public void Open()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = true;
-            ofd.DefaultExt = "yml";
-            ofd.Filter = "Script Files (*.yml)|*.yml";
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                AddExtension = true,
+                DefaultExt = "yml",
+                Filter = "Script Files (*.yml)|*.yml",
+                Multiselect = true
+            };
             DialogResult dr = ofd.ShowDialog(this);
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
                 try
                 {
-                    string fn = ofd.FileName;
-                    string data = File.ReadAllText(fn);
-                    NewTab();
-                    int tab = Scripts.Count - 1;
-                    Scripts[tab].FilePath = fn;
-                    SetText(tab, data);
-                    Scripts[tab].Saved = true;
-                    Scripts[tab].IgnoreOneSaveNotif = true;
-                    FixTabName(tab);
+                    foreach (string fn in ofd.FileNames)
+                    {
+                        string data = File.ReadAllText(fn);
+                        NewTab();
+                        int tab = Scripts.Count - 1;
+                        Scripts[tab].FilePath = fn;
+                        SetText(tab, data);
+                        Scripts[tab].Saved = true;
+                        Scripts[tab].IgnoreOneSaveNotif = true;
+                        FixTabName(tab);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -755,9 +769,11 @@ namespace Denizen2IDE
 
         public void SaveAs(int tab)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.AddExtension = true;
-            sfd.DefaultExt = "yml";
+            SaveFileDialog sfd = new SaveFileDialog()
+            {
+                AddExtension = true,
+                DefaultExt = "yml"
+            };
             if (Scripts[tab].FilePath != null)
             {
                 sfd.InitialDirectory = Path.GetDirectoryName(Scripts[tab].FilePath);
@@ -781,17 +797,17 @@ namespace Denizen2IDE
             }
         }
 
-        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ZoomInToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
         }
 
-        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ZoomOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
         }
 
-        private void resetZoomToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ResetZoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             zoom = 1f;
             Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
