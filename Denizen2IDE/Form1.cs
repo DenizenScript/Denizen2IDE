@@ -612,10 +612,8 @@ namespace Denizen2IDE
 
         private void Rtfb_VScroll(object sender, EventArgs e)
         {
-#if WINDOWS
             Point pt = GetScrollPos(RTFBox);
             SetScrollPos(LinesRTFBox, pt);
-#endif
         }
 
         private void Rtfb_FontChanged(object sender, EventArgs e)
@@ -627,6 +625,7 @@ namespace Denizen2IDE
         {
             if (!e.Shift && e.KeyData == Keys.Enter)
             {
+                Point pt = GetScrollPos(RTFBox);
                 e.Handled = true;
                 int s = RTFBox.SelectionStart;
                 int spaces = 0;
@@ -651,6 +650,7 @@ namespace Denizen2IDE
                 }
                 RTFBox.Text = RTFBox.Text.Substring(0, s) + Environment.NewLine + new string(' ', spaces) + RTFBox.Text.Substring(s + RTFBox.SelectionLength);
                 RTFBox.Select(s + Environment.NewLine.Length + spaces - 1, 0);
+                SetScrollPos(RTFBox, pt);
                 T_Tick(null, null);
             }
         }
