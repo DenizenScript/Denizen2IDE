@@ -159,7 +159,23 @@ namespace Denizen2IDE
         {
             get
             {
+                return (RichTextBox)tabControl1.SelectedTab.Controls[1];
+            }
+        }
+
+        public RichTextBox LinesRTFBox
+        {
+            get
+            {
                 return (RichTextBox)tabControl1.SelectedTab.Controls[0];
+            }
+        }
+
+        public RichTextBox LineReferenceBox
+        {
+            get
+            {
+                return (RichTextBox)tabControl1.TabPages[0].Controls[0];
             }
         }
 
@@ -167,7 +183,7 @@ namespace Denizen2IDE
         {
             get
             {
-                return (RichTextBox)tabControl1.TabPages[0].Controls[0];
+                return (RichTextBox)tabControl1.TabPages[0].Controls[1];
             }
         }
 
@@ -463,11 +479,25 @@ namespace Denizen2IDE
                 }
             }
             RTFBox.Rtf = rtf.FinalOutput((int)(zoom * 24));
+            // Fix line numbers
+            int lineCount = RTFBox.GetLineFromCharIndex(RTFBox.Text.Length) + 1;
+            RTFBuilder bLines = new RTFBuilder();
+            for (int i = 0; i < lineCount; i++)
+            {
+                bLines.Append(RTFBuilder.For((i + 1).ToString()));
+                bLines.AppendLine();
+            }
+            LinesRTFBox.Rtf = bLines.FinalOutput((int)(zoom * 24));
+            LinesRTFBox.SelectAll();
+            LinesRTFBox.SelectionAlignment = HorizontalAlignment.Right;
+            LinesRTFBox.ShowSelectionMargin = false;
+            LinesRTFBox.ScrollBars = RichTextBoxScrollBars.None;
             // Set back to normal
             Resume(this);
             RTFBox.Select(start, len); // TODO: Mess with selecting fresh text a bit less often.
             SetScrollPos(RTFBox, scroll);
             RTFBox.Invalidate();
+            LinesRTFBox.Invalidate();
             textChanged = false;
             Scripts[tabControl1.SelectedIndex].Saved = Scripts[tabControl1.SelectedIndex].IgnoreOneSaveNotif;
             Scripts[tabControl1.SelectedIndex].IgnoreOneSaveNotif = false;
@@ -478,7 +508,7 @@ namespace Denizen2IDE
 
         float z = -1;
 
-        bool textChanged = false;
+        bool textChanged = true;
         
         private void RichTextBox1_TextChanged(object sender, EventArgs e)
         {
@@ -519,6 +549,15 @@ namespace Denizen2IDE
             TabPage tp = new TabPage("New Script " + CPage++);
             Configure(tp, tabControl1.TabCount - 1);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
+            RichTextBox linertfb = new RichTextBox()
+            {
+                Location = LineReferenceBox.Location,
+                Size = LineReferenceBox.Size,
+                Font = LineReferenceBox.Font,
+                ReadOnly = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
+            };
+            tp.Controls.Add(linertfb);
             RichTextBox rtfb = new RichTextBox()
             {
                 Location = ReferenceBox.Location,
@@ -567,6 +606,21 @@ namespace Denizen2IDE
             rtfb.MouseWheel += Form1_MouseWheel;
             rtfb.KeyDown += Rtfb_KeyDown;
             rtfb.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            rtfb.FontChanged += Rtfb_FontChanged;
+            rtfb.VScroll += Rtfb_VScroll;
+        }
+
+        private void Rtfb_VScroll(object sender, EventArgs e)
+        {
+#if WINDOWS
+            Point pt = GetScrollPos(RTFBox);
+            SetScrollPos(LinesRTFBox, pt);
+#endif
+        }
+
+        private void Rtfb_FontChanged(object sender, EventArgs e)
+        {
+            LinesRTFBox.Font = RTFBox.Font;
         }
 
         private void Rtfb_KeyDown(object sender, KeyEventArgs e)
@@ -811,6 +865,11 @@ namespace Denizen2IDE
         {
             zoom = 1f;
             Form1_MouseWheel(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
+        }
+
+        private void RichTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

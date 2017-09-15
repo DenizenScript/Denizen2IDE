@@ -13,6 +13,11 @@ namespace Denizen2IDE
             return new RTFBuilder() { InternalStr = "{" + text.Replace("\\", "\\\\").Replace("{", "\\{").Replace("}", "\\}").Replace("\t", "\\tab").Replace("\r", "").Replace("\n", "\\par").Replace(" ", "\\~") + "}" };
         }
 
+        public static RTFBuilder RightAligned(RTFBuilder text)
+        {
+            return new RTFBuilder() { InternalStr = "{\\qr " + text.ToString() + "\\qr0}" };
+        }
+
         public static RTFBuilder Bold(RTFBuilder text)
         {
             return new RTFBuilder() { InternalStr = "{\\b " + text.ToString() + "\\b0}" };
