@@ -735,8 +735,8 @@ namespace Denizen2IDE
             OpenFileDialog ofd = new OpenFileDialog()
             {
                 AddExtension = true,
-                DefaultExt = "yml",
-                Filter = "Script Files (*.yml)|*.yml",
+                DefaultExt = "dsc",
+                Filter = "Script Files (*.dsc)|*.dsc",
                 Multiselect = true
             };
             DialogResult dr = ofd.ShowDialog(this);
@@ -826,13 +826,13 @@ namespace Denizen2IDE
             SaveFileDialog sfd = new SaveFileDialog()
             {
                 AddExtension = true,
-                DefaultExt = "yml"
+                DefaultExt = "dsc"
             };
             if (Scripts[tab].FilePath != null)
             {
                 sfd.InitialDirectory = Path.GetDirectoryName(Scripts[tab].FilePath);
             }
-            sfd.Filter = "Script Files (*.yml)|*.yml";
+            sfd.Filter = "Script Files (*.dsc)|*.dsc";
             DialogResult dr = sfd.ShowDialog(this);
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
