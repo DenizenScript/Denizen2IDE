@@ -14,14 +14,17 @@ namespace Denizen2IDE
         /// <summary>
         /// Program version.
         /// </summary>
-        public static string VERSION = Assembly.GetCallingAssembly().GetName().Version.ToString();
+        public static readonly string VERSION = Assembly.GetCallingAssembly().GetName().Version.ToString();
+
+        public static string[] START_ARGS { get; private set; }
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            START_ARGS = args;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;

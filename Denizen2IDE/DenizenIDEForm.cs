@@ -30,12 +30,22 @@ namespace Denizen2IDE
             Configure(richTextBox1);
             Rel = this.Size - richTextBox1.Size;
             TabRel = this.Size - tabControl1.Size;
-            Scripts.Add(new LoadedScript() { FilePath = null, UnsavedName = tabPage1.Text });
+            LoadedScript initialScript = new LoadedScript() { FilePath = null, UnsavedName = tabPage1.Text };
+            Scripts.Add(initialScript);
             Configure(tabPage1, 0);
+            SetText(0, "");
             tabControl1.MouseClick += TabControl1_MouseClick;
             tabControl1.MouseClick += TabControl1_MouseClick2;
             this.MouseWheel += Form1_MouseWheel;
             this.FormClosing += Form1_FormClosing;
+        }
+
+        private void DenizenIDEForm_Load(object sender, EventArgs e)
+        {
+            foreach (string str in Program.START_ARGS)
+            {
+                OpenFile(str);
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -380,7 +390,7 @@ namespace Denizen2IDE
         bool NoDup = false;
         
         // TODO: Accelerate this method as much as possible using async and whatever else we can do!
-        // Maybe also replace RTFBuilder with lower-level calls somehow.
+        // Maybe also replace RTFBuilder with lower-level / simpler calls somehow.
         private void T_Tick(object sender, EventArgs e)
         {
             if (!textChanged || NoDup)
@@ -546,7 +556,7 @@ namespace Denizen2IDE
 
         public void NewTab()
         {
-            TabPage tp = new TabPage("New Script " + CPage++);
+            TabPage tp = new TabPage("New Script " + (CPage++));
             Configure(tp, tabControl1.TabCount - 1);
             tabControl1.TabPages.Insert(tabControl1.TabCount - 1, tp);
             RichTextBox linertfb = new RichTextBox()
@@ -730,6 +740,29 @@ namespace Denizen2IDE
             }
         }
 
+        public void OpenFile(string filename)
+        {
+            try
+            {
+                string data = File.ReadAllText(filename);
+                NewTab();
+                int tab = Scripts.Count - 1;
+                Scripts[tab].FilePath = filename;
+                SetText(tab, data);
+                Scripts[tab].Saved = true;
+                Scripts[tab].IgnoreOneSaveNotif = true;
+                FixTabName(tab);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Failed to open file (Not found): " + filename, "File Open Failed");
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show("Failed to open file (Refused: " + ex.Message + "): " + filename, "File Open Failed");
+            }
+        }
+
         public void Open()
         {
             OpenFileDialog ofd = new OpenFileDialog()
@@ -744,16 +777,9 @@ namespace Denizen2IDE
             {
                 try
                 {
-                    foreach (string fn in ofd.FileNames)
+                    foreach (string filename in ofd.FileNames)
                     {
-                        string data = File.ReadAllText(fn);
-                        NewTab();
-                        int tab = Scripts.Count - 1;
-                        Scripts[tab].FilePath = fn;
-                        SetText(tab, data);
-                        Scripts[tab].Saved = true;
-                        Scripts[tab].IgnoreOneSaveNotif = true;
-                        FixTabName(tab);
+                        OpenFile(filename);
                     }
                 }
                 catch (Exception ex)
@@ -813,12 +839,12 @@ namespace Denizen2IDE
 
         public string GetText(int tab)
         {
-            return ((RichTextBox)tabControl1.TabPages[tab].Controls[0]).Text;
+            return ((RichTextBox)tabControl1.TabPages[tab].Controls[1]).Text;
         }
 
         public void SetText(int tab, string txt)
         {
-            ((RichTextBox)tabControl1.TabPages[tab].Controls[0]).Text = txt;
+            ((RichTextBox)tabControl1.TabPages[tab].Controls[1]).Text = txt;
         }
 
         public void SaveAs(int tab)
