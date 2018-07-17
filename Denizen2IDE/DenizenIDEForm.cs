@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Denizen2IDE
 {
-    public partial class Form1 : Form
+    public partial class DenizenIDEForm : Form
     {
         // TODO: Dragging files onto the form
 
@@ -18,7 +18,7 @@ namespace Denizen2IDE
 
         public static Encoding ENCODING = new UTF8Encoding(false);
 
-        public Form1()
+        public DenizenIDEForm()
         {
             InitializeComponent();
             Timer t = new Timer()

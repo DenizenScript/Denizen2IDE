@@ -11,6 +11,9 @@ namespace Denizen2IDE
 {
     static class Program
     {
+        /// <summary>
+        /// Program version.
+        /// </summary>
         public static string VERSION = Assembly.GetCallingAssembly().GetName().Version.ToString();
 
         /// <summary>
@@ -24,7 +27,7 @@ namespace Denizen2IDE
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new DenizenIDEForm());
         }
     }
 }
